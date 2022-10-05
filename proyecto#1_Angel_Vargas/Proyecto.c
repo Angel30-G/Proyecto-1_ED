@@ -53,53 +53,47 @@ city* ciudades(char* n) {
  * E: Un struct "city list node", que está formado por dos elementos, un struct city*, y un cln* sigt como en todo 
  * nodo de una lista.
  */
-typedef struct cln{
+typedef struct city_node{
 	city* country;
-	struct cln* sig;
+	struct city_node* sig;
 }cln;
-struct cln* inic = NULL;
+struct city_node* inic = NULL;
 
 /*
- * E: gen_string: Recibe desde la interfaz un texto que puede contener espacios, lo transforma en una cadena de char y
- * lo procesa con un buffer para ajustar el tamaño del arreglo a la cantidad de caracteres de la cadena; retorna un
- * string.
+ * E: Se genera un struct nodo de tipo cl
+ * S: se ingresa un objeto de tipo cln con el nombre inicio, el cual marcara el inicio de la lista de las ciudades
  */
 typedef struct cl{
 	cln* inicio;
 }cl;
 
 /*
- * gen_string: Recibe desde la interfaz un texto que puede contener espacios, lo transforma en una cadena de char y
- * lo procesa con un buffer para ajustar el tamaño del arreglo a la cantidad de caracteres de la cadena; retorna un
- * string.
+ * E: Se ingresa la ciudad
+ * S: Se retorna la nueva ciudad
  */
-cln* init_cln(city* ct){
+cln* iniciar_cln(city* ct){
 	cln* nn = calloc(1,sizeof(cln));
 	nn->country = ct;
 	return nn;
 }
 
 /*
- * gen_string: Recibe desde la interfaz un texto que puede contener espacios, lo transforma en una cadena de char y
- * lo procesa con un buffer para ajustar el tamaño del arreglo a la cantidad de caracteres de la cadena; retorna un
- * string.
+ * E: Se inicializa un espacio de memoria
+ * S:
  */
-cl* init_cl(){
-	cl* nl = calloc(1,sizeof(cl));
-	return nl;
-}
+
 
 int insert_cl(cl* l,city* ct){
 	if(l == NULL){
 		printf("La lista no existe \n");
 		return -1;
 	}
-	cln* nn = init_cln(ct);
+	cln* nn = iniciar_cln(ct);
 	if(l->inicio == NULL) {
 		l->inicio = nn;
 	}
 	else{
-		struct cln* act = l->inicio;
+		struct city_node* act = l->inicio;
 		while (act->sig != NULL) {
 		act = act->sig;
 		}
@@ -205,9 +199,9 @@ void set_player_values(product** it){
  * E: Se inician los valores y puntos del jugador
  * S: Se retornan los valores del inventario del jugador dentro de la tabla Hash
  */
-player* init_player(){
+player* iniciar_jugador(){
 	player* py = calloc(1,sizeof(player));
-	py->points = 5000;
+	py->points = 2800;
 	product** ht = hash_table(31);
 	generate_product_table(ht, material);
 	py->inventory=ht;
@@ -273,17 +267,17 @@ int vender(int cantidad, product* p, player* py){
  * E: Se ingresa la ciudad y los recursos del jugador
  * S: Se actualizan los recursos del jugador
  */
-int comerce(city* ct, player* py){
+int comerciar(city* ct, player* py){
 	if(ct->interest > 30){
 		int ts = 0;
 		char* entry="a";
 		int key = hash(entry,31);
 		while(ct->product_table[key] == NULL || ct->product_table[key]->price == 0){
 		printf("Dijite un producto valido con el que desea comerciar: ");
-		char e[200];
-		scanf("%s", e);
+		char nombre_ciudad[200];
+		scanf("%s", nombre_ciudad);
 		printf("\n");
-		key = hash(e, 31);
+		key = hash(nombre_ciudad, 31);
 		//printf("Producto seleccionado: %d \n",key);
 		}
 		if(ct->product_table[key]->status == 0){
@@ -394,9 +388,9 @@ void client_resources(cl* cities, player* py){
 		print_cl(cities);
 		print_player(py);
 		city* ct = select_city(cities);
-		int ts = comerce(ct,py);
+		int ts = comerciar(ct,py);
 		while(ts!=1){
-			ts = comerce(ct,py);
+			ts = comerciar(ct,py);
 		}
 		if(ts == 1){
 			ronda++;
@@ -436,7 +430,7 @@ int main(){
     printf("- El juego cuenta con 30 turnos y si se llega al turno 30, el juego finaliza y decide si el jugador gano o perdio \n");
     printf("\n");
 	cl* cities = generate_cities(cantidad);
-	player* py = init_player();
+	player* py = iniciar_jugador();
 	client_resources(cities,py);
 	
 	return 0;
